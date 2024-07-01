@@ -22,43 +22,69 @@ class DBClient {
   }
 
   /**
-   * Checks if this client's connection to the MongoDB server is active.
-   * @returns {boolean}
+   * Checks if this client's connection to the MongoDB server
+   * is active.
+   * @returns {boolean} - True if connected, otherwise false.
    */
   isAlive() {
-    return this.client.isConnected();
+    try {
+      return this.client.isConnected();
+    } catch (error) {
+      console.error('Failed to check connection:', error);
+      throw error;
+    }
   }
 
   /**
    * Retrieves the number of users in the database.
-   * @returns {Promise<Number>}
+   * @returns {Promise<number>} - The number of users.
    */
   async nbUsers() {
-    return this.client.db().collection('users').countDocuments();
+    try {
+      return await this.client.db().collection('users').countDocuments();
+    } catch (error) {
+      console.error('Failed to count users:', error);
+      throw error;
+    }
   }
 
   /**
    * Retrieves the number of files in the database.
-   * @returns {Promise<Number>}
+   * @returns {Promise<number>} - The number of files.
    */
   async nbFiles() {
-    return this.client.db().collection('files').countDocuments();
+    try {
+      return await this.client.db().collection('files').countDocuments();
+    } catch (error) {
+      console.error('Failed to count files:', error);
+      throw error;
+    }
   }
 
   /**
    * Retrieves a reference to the `users` collection.
-   * @returns {Promise<Collection>}
+   * @returns {Promise<Collection>} - The users collection.
    */
   async usersCollection() {
-    return this.client.db().collection('users');
+    try {
+      return this.client.db().collection('users');
+    } catch (error) {
+      console.error('Failed to get users collection:', error);
+      throw error;
+    }
   }
 
   /**
    * Retrieves a reference to the `files` collection.
-   * @returns {Promise<Collection>}
+   * @returns {Promise<Collection>} - The files collection.
    */
   async filesCollection() {
-    return this.client.db().collection('files');
+    try {
+      return this.client.db().collection('files');
+    } catch (error) {
+      console.error('Failed to get files collection:', error);
+      throw error;
+    }
   }
 }
 
