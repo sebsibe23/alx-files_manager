@@ -1,30 +1,30 @@
 /**********************************************************
  * This module defines a RedisClient class for interacting
- * with a Redis 
- * database. The RedisClient class is built using the 
- * `redis` library to 
- * create a Redis client and `util.promisify` to handle 
- * asynchronous 
- * operations. It includes methods for checking the 
- * connection status, 
+ * with a Redis
+ * database. The RedisClient class is built using the
+ * `redis` library to
+ * create a Redis client and `util.promisify` to handle
+ * asynchronous
+ * operations. It includes methods for checking the
+ * connection status,
  * retrieving, storing, and deleting key-value pairs.
- *  This class is 
- * particularly useful for caching and session management 
- * in web 
+ *  This class is
+ * particularly useful for caching and session management
+ * in web
  * applications.
  *
- * The class constructor initializes a Redis client 
- * and sets up event 
- * listeners for connection and error events to manage 
- * the client's 
+ * The class constructor initializes a Redis client
+ * and sets up event
+ * listeners for connection and error events to manage
+ * the client's
  * connection status.
  *
  * Methods:
- * - isAlive(): Returns a boolean indicating if the client 
+ * - isAlive(): Returns a boolean indicating if the client
  * is connected.
  * - get(key): Retrieves the value associated with a key.
  * - set(key, value, duration): Stores a key-value pair
- *  with an expiration 
+ *  with an expiration
  *   time.
  * - del(key): Deletes a key-value pair.
  *********************************************************/
