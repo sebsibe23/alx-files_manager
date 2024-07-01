@@ -1,35 +1,3 @@
-/**********************************************************
- * This module defines a RedisClient class for interacting
- * with a Redis
- * database. The RedisClient class is built using the
- * `redis` library to
- * create a Redis client and `util.promisify` to handle
- * asynchronous
- * operations. It includes methods for checking the
- * connection status,
- * retrieving, storing, and deleting key-value pairs.
- *  This class is
- * particularly useful for caching and session management
- * in web
- * applications.
- *
- * The class constructor initializes a Redis client
- * and sets up event
- * listeners for connection and error events to manage
- * the client's
- * connection status.
- *
- * Methods:
- * - isAlive(): Returns a boolean indicating if the client
- * is connected.
- * - get(key): Retrieves the value associated with a key.
- * - set(key, value, duration): Stores a key-value pair
- *  with an expiration
- *   time.
- * - del(key): Deletes a key-value pair.
- *********************************************************/
-
-
 import { promisify } from 'util';
 import { createClient } from 'redis';
 
@@ -44,7 +12,10 @@ class RedisClient {
     this.client = createClient();
     this.isClientConnected = true;
     this.client.on('error', (err) => {
-      console.error('Redis client failed to connect:', err.message || err.toString());
+      console.error(
+        'Redis client failed to connect:',
+        err.message || err.toString()
+      );
       this.isClientConnected = false;
     });
     this.client.on('connect', () => {
@@ -53,7 +24,8 @@ class RedisClient {
   }
 
   /**
-   * Checks if this client's connection to the Redis server is active.
+   * Checks if this client's connection to the Redis server
+   * is active.
    * @returns {boolean}
    */
   isAlive() {
@@ -66,19 +38,33 @@ class RedisClient {
    * @returns {String | Object}
    */
   async get(key) {
-    return promisify(this.client.GET).bind(this.client)(key);
+    try {
+      return await promisify(this.client.GET)
+        .bind(this.client)(key);
+    } catch (err) {
+      console.error('Error retrieving key:', err.message || err.toString());
+      throw err;
+    }
   }
 
   /**
-   * Stores a key and its value along with an expiration time.
+   * Stores a key and its value along with an expiration
+   * time.
    * @param {String} key The key of the item to store.
-   * @param {String | Number | Boolean} value The item to store.
-   * @param {Number} duration The expiration time of the item in seconds.
+   * @param {String | Number | Boolean} value The item to
+   * store.
+   * @param {Number} duration The expiration time of the
+   * item in seconds.
    * @returns {Promise<void>}
    */
   async set(key, value, duration) {
-    await promisify(this.client.SETEX)
-      .bind(this.client)(key, duration, value);
+    try {
+      await promisify(this.client.SETEX)
+        .bind(this.client)(key, duration, value);
+    } catch (err) {
+      console.error('Error setting key:', err.message || err.toString());
+      throw err;
+    }
   }
 
   /**
@@ -87,7 +73,13 @@ class RedisClient {
    * @returns {Promise<void>}
    */
   async del(key) {
-    await promisify(this.client.DEL).bind(this.client)(key);
+    try {
+      await promisify(this.client.DEL)
+        .bind(this.client)(key);
+    } catch (err) {
+      console.error('Error deleting key:', err.message || err.toString());
+      throw err;
+    }
   }
 }
 
