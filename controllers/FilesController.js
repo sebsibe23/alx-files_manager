@@ -1,5 +1,19 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable no-unused-vars */
+
+/**
+ * FilesController handles file management operations including upload,
+ * download, visibility settings, and indexing. It utilizes Bull for
+ * asynchronous job processing, MongoDB for database operations, and
+ * various Node.js modules for file system handling.
+ *
+ * Key functionalities:
+ * - Upload files with optional data encryption
+ * - Generate and manage thumbnails for image files
+ * - Retrieve file metadata and content based on user permissions
+ * - Control file visibility with publish and unpublish methods
+ * - Efficiently paginate and index files stored in MongoDB
+ */
 import { tmpdir } from 'os';
 import { promisify } from 'util';
 import Queue from 'bull/lib/queue';
@@ -53,9 +67,11 @@ const isValidId = (id) => {
 
 export default class FilesController {
   /**
-   * Uploads a file.
-   * @param {Request} req The Express request object.
-   * @param {Response} res The Express response object.
+   * Uploads the file.
+   * @param {Request}
+   * req The Express request object.
+   * @param {Response}
+   * res The Express response object.
    */
   static async postUpload(req, res) {
     const { user } = req;
@@ -96,8 +112,6 @@ export default class FilesController {
     const baseDir = `${process.env.FOLDER_PATH || ''}`.trim().length > 0
       ? process.env.FOLDER_PATH.trim()
       : joinPath(tmpdir(), DEFAULT_ROOT_FOLDER);
-    // default baseDir == '/tmp/files_manager'
-    // or (on Windows) '%USERPROFILE%/AppData/Local/Temp/files_manager';
     const newFile = {
       userId: new mongoDBCore.BSON.ObjectId(userId),
       name,
@@ -116,7 +130,6 @@ export default class FilesController {
     const insertionInfo = await (await dbClient.filesCollection())
       .insertOne(newFile);
     const fileId = insertionInfo.insertedId.toString();
-    // start thumbnail generation worker
     if (type === VALID_FILE_TYPES.image) {
       const jobName = `Image thumbnail [${userId}-${fileId}]`;
       fileQueue.add({ userId, fileId, name: jobName });
