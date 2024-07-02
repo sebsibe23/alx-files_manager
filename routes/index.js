@@ -9,10 +9,7 @@ import { APIError, errorResponse } from '../middlewares/error';
 
 /**
  * Injects routes with their handlers to the given Express application.
- * Utilizes various controllers for handling different endpoints.
- * Implements authentication middlewares for secure access.
- * Handles error responses using custom middleware.
- * @param {Express} api - The Express application instance.
+ * @param {Express} api
  */
 const injectRoutes = (api) => {
   api.get('/status', AppController.getStatus);
