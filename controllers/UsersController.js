@@ -18,24 +18,18 @@ export default class UsersController {
       res.status(400).json({ error: 'Missing password' });
       return;
     }
+    const user = await (await dbClient.usersCollection()).findOne({ email });
 
-    try {
-      const user = await (await dbClient.usersCollection()).findOne({ email });
-
-      if (user) {
-        res.status(400).json({ error: 'Already exist' });
-        return;
-      }
-
-      const insertionInfo = await (await dbClient.usersCollection())
-        .insertOne({ email, password: sha1(password) });
-      const userId = insertionInfo.insertedId.toString();
-
-      userQueue.add({ userId });
-      res.status(201).json({ email, id: userId });
-    } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+    if (user) {
+      res.status(400).json({ error: 'Already exist' });
+      return;
     }
+    const insertionInfo = await (await dbClient.usersCollection())
+      .insertOne({ email, password: sha1(password) });
+    const userId = insertionInfo.insertedId.toString();
+
+    userQueue.add({ userId });
+    res.status(201).json({ email, id: userId });
   }
 
   static async getMe(req, res) {
