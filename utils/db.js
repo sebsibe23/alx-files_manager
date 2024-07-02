@@ -4,11 +4,15 @@ import Collection from 'mongodb/lib/collection';
 import envLoader from './env_loader';
 
 /**
- * Represents a MongoDB client.
+ * Represents a MongoDB client for managing database connections,
+ * querying user and file collections, and ensuring the database
+ * is alive and responsive.
  */
 class DBClient {
   /**
-   * Creates a new DBClient instance.
+   * Initializes a new DBClient instance, loading environment
+   * variables, constructing the MongoDB URL, and establishing
+   * a connection to the database.
    */
   constructor() {
     envLoader();
@@ -18,47 +22,86 @@ class DBClient {
     const dbURL = `mongodb://${host}:${port}/${database}`;
 
     this.client = new mongodb.MongoClient(dbURL, { useUnifiedTopology: true });
-    this.client.connect();
+    try {
+      this.client.connect();
+    } catch (error) {
+      console.error('Failed to connect to MongoDB:', error);
+    }
   }
 
   /**
-   * Checks if this client's connection to the MongoDB server is active.
-   * @returns {boolean}
+   * Checks if this client's connection to the MongoDB server
+   * is currently active and alive.
+   * @returns {boolean} - True if the client is connected,
+   * false otherwise.
    */
   isAlive() {
-    return this.client.isConnected();
+    try {
+      return this.client.isConnected();
+    } catch (error) {
+      console.error('Error checking if MongoDB client is alive:', error);
+      return false;
+    }
   }
 
   /**
-   * Retrieves the number of users in the database.
-   * @returns {Promise<Number>}
+   * Retrieves the number of user documents in the `users`
+   * collection of the database.
+   * @returns {Promise<Number>} - A promise that resolves to
+   * the number of users.
    */
   async nbUsers() {
-    return this.client.db().collection('users').countDocuments();
+    try {
+      return await this.client.db().collection('users').countDocuments();
+    } catch (error) {
+      console.error('Error counting user documents:', error);
+      throw error;
+    }
   }
 
   /**
-   * Retrieves the number of files in the database.
-   * @returns {Promise<Number>}
+   * Retrieves the number of file documents in the `files`
+   * collection of the database.
+   * @returns {Promise<Number>} - A promise that resolves to
+   * the number of files.
    */
   async nbFiles() {
-    return this.client.db().collection('files').countDocuments();
+    try {
+      return await this.client.db().collection('files').countDocuments();
+    } catch (error) {
+      console.error('Error counting file documents:', error);
+      throw error;
+    }
   }
 
   /**
-   * Retrieves a reference to the `users` collection.
-   * @returns {Promise<Collection>}
+   * Retrieves a reference to the `users` collection in the
+   * database, used for performing operations on user data.
+   * @returns {Promise<Collection>} - A promise that resolves
+   * to the users collection.
    */
   async usersCollection() {
-    return this.client.db().collection('users');
+    try {
+      return this.client.db().collection('users');
+    } catch (error) {
+      console.error('Error retrieving users collection:', error);
+      throw error;
+    }
   }
 
   /**
-   * Retrieves a reference to the `files` collection.
-   * @returns {Promise<Collection>}
+   * Retrieves a reference to the `files` collection in the
+   * database, used for performing operations on file data.
+   * @returns {Promise<Collection>} - A promise that resolves
+   * to the files collection.
    */
   async filesCollection() {
-    return this.client.db().collection('files');
+    try {
+      return this.client.db().collection('files');
+    } catch (error) {
+      console.error('Error retrieving files collection:', error);
+      throw error;
+    }
   }
 }
 
