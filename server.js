@@ -4,26 +4,43 @@ import injectRoutes from './routes';
 import injectMiddlewares from './libs/middlewares';
 
 /**
- * Initialize a new Express server instance.
+ * This script sets up and starts an Express server by
+ * injecting middleware, routes, and initializing the
+ * server startup process.
  */
+
 const server = express();
 
 /**
- * Inject middlewares into the server instance.
- * @param {object} server - The Express server instance.
+ * Injects necessary middlewares into the server.
+ * This can include logging, parsing, and security
+ * middlewares.
  */
-injectMiddlewares(server);
+try {
+  injectMiddlewares(server);
+} catch (error) {
+  console.error('Error injecting middlewares:', error);
+}
 
 /**
- * Inject routes into the server instance.
- * @param {object} server - The Express server instance.
+ * Injects application routes into the server. This
+ * includes defining endpoints and their respective
+ * handlers.
  */
-injectRoutes(server);
+try {
+  injectRoutes(server);
+} catch (error) {
+  console.error('Error injecting routes:', error);
+}
 
 /**
- * Start the server with the injected middlewares and routes.
- * @param {object} server - The Express server instance.
+ * Starts the server on the specified port and host,
+ * making it ready to accept requests.
  */
-startServer(server);
+try {
+  startServer(server);
+} catch (error) {
+  console.error('Error starting the server:', error);
+}
 
 export default server;

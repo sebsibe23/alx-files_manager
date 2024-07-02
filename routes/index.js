@@ -9,93 +9,37 @@ import { APIError, errorResponse } from '../middlewares/error';
 
 /**
  * Injects routes with their handlers to the given Express application.
- * @param {Express} api - The Express application instance.
+ * This function defines the routes and their corresponding controllers,
+ * including authentication and error handling middlewares.
+ *
+ * @param {Express} api - The Express application instance to inject routes into.
  */
 const injectRoutes = (api) => {
-  /**
-   * Route to get the status of the application.
-   * @route GET /status
-   */
-  api.get('/status', AppController.getStatus);
+  try {
+    api.get('/status', AppController.getStatus);
+    api.get('/stats', AppController.getStats);
 
-  /**
-   * Route to get the statistics of the application.
-   * @route GET /stats
-   */
-  api.get('/stats', AppController.getStats);
+    api.get('/connect', basicAuthenticate, AuthController.getConnect);
+    api.get('/disconnect', xTokenAuthenticate, AuthController.getDisconnect);
 
-  /**
-   * Route to connect a user with basic authentication.
-   * @route GET /connect
-   */
-  api.get('/connect', basicAuthenticate, AuthController.getConnect);
+    api.post('/users', UsersController.postNew);
+    api.get('/users/me', xTokenAuthenticate, UsersController.getMe);
 
-  /**
-   * Route to disconnect a user with token authentication.
-   * @route GET /disconnect
-   */
-  api.get('/disconnect', xTokenAuthenticate, AuthController.getDisconnect);
+    api.post('/files', xTokenAuthenticate, FilesController.postUpload);
+    api.get('/files/:id', xTokenAuthenticate, FilesController.getShow);
+    api.get('/files', xTokenAuthenticate, FilesController.getIndex);
+    api.put('/files/:id/publish', xTokenAuthenticate, FilesController.putPublish);
+    api.put('/files/:id/unpublish', xTokenAuthenticate, FilesController.putUnpublish);
+    api.get('/files/:id/data', FilesController.getFile);
 
-  /**
-   * Route to create a new user.
-   * @route POST /users
-   */
-  api.post('/users', UsersController.postNew);
+    api.all('*', (req, res, next) => {
+      errorResponse(new APIError(404, `Cannot ${req.method} ${req.url}`), req, res, next);
+    });
 
-  /**
-   * Route to get the current user's details.
-   * @route GET /users/me
-   */
-  api.get('/users/me', xTokenAuthenticate, UsersController.getMe);
-
-  /**
-   * Route to upload a new file.
-   * @route POST /files
-   */
-  api.post('/files', xTokenAuthenticate, FilesController.postUpload);
-
-  /**
-   * Route to get details of a specific file by ID.
-   * @route GET /files/:id
-   */
-  api.get('/files/:id', xTokenAuthenticate, FilesController.getShow);
-
-  /**
-   * Route to get a list of all files.
-   * @route GET /files
-   */
-  api.get('/files', xTokenAuthenticate, FilesController.getIndex);
-
-  /**
-   * Route to publish a file by ID.
-   * @route PUT /files/:id/publish
-   */
-  api.put('/files/:id/publish', xTokenAuthenticate, FilesController.putPublish);
-
-  /**
-   * Route to unpublish a file by ID.
-   * @route PUT /files/:id/unpublish
-   */
-  api.put('/files/:id/unpublish', xTokenAuthenticate, FilesController.putUnpublish);
-
-  /**
-   * Route to get file data by ID.
-   * @route GET /files/:id/data
-   */
-  api.get('/files/:id/data', FilesController.getFile);
-
-  /**
-   * Catch-all route for handling 404 errors.
-   * @route ALL *
-   */
-  api.all('*', (req, res, next) => {
-    errorResponse(new APIError(404, `Cannot ${req.method} ${req.url}`), req, res, next);
-  });
-
-  /**
-   * Middleware to handle errors.
-   */
-  api.use(errorResponse);
+    api.use(errorResponse);
+  } catch (error) {
+    console.error('Error injecting routes:', error);
+  }
 };
 
 export default injectRoutes;
