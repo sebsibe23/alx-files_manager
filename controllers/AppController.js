@@ -1,9 +1,3 @@
-/*
- * Controller for managing application status and statistics.
- * Utilizes Redis and MongoDB clients for real-time data retrieval.
- * Uses promises for asynchronous operations and JSON responses.
- * Code linting ensured using ESLint for consistent style.
- */
 /* eslint-disable import/no-named-as-default */
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
