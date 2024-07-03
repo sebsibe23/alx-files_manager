@@ -51,11 +51,34 @@ const isValidId = (id) => {
   return true;
 };
 
+/**
+ * This module defines the FilesController class which handles
+ * file-related requests, including uploading files, retrieving
+ * file metadata, and managing file visibility. It interacts
+ * with the MongoDB database to manage file data and uses a job
+ * queue for thumbnail generation tasks.
+ *
+ * Key functionalities include:
+ * - Uploading a new file with `postUpload()`
+ * - Retrieving file metadata with `getShow()`
+ * - Listing files associated with a user with `getIndex()`
+ * - Publishing and unpublishing files with `putPublish()` and
+ *   `putUnpublish()`
+ * - Retrieving file content with `getFile()`
+ *
+ * The FilesController class ensures that files are securely
+ * stored and managed, and handles tasks such as thumbnail
+ * generation asynchronously using a job queue.
+ */
+
 export default class FilesController {
   /**
-   * Uploads a file.
-   * @param {Request} req The Express request object.
-   * @param {Response} res The Express response object.
+   * Handles the request to upload a new file. Validates the
+   * request data, checks for existing parent folders, and
+   * inserts the new file into the database. Adds a job to the
+   * thumbnail generation queue if the file is an image.
+   * @param {Request} req The HTTP request object.
+   * @param {Response} res The HTTP response object.
    */
   static async postUpload(req, res) {
     const { user } = req;
@@ -133,6 +156,11 @@ export default class FilesController {
     });
   }
 
+  /**
+   * Handles the request to retrieve the metadata of a file.
+   * @param {Request} req The HTTP request object.
+   * @param {Response} res The HTTP response object.
+   */
   static async getShow(req, res) {
     const { user } = req;
     const id = req.params ? req.params.id : NULL_ID;
@@ -161,8 +189,8 @@ export default class FilesController {
 
   /**
    * Retrieves files associated with a specific user.
-   * @param {Request} req The Express request object.
-   * @param {Response} res The Express response object.
+   * @param {Request} req The HTTP request object.
+   * @param {Response} res The HTTP response object.
    */
   static async getIndex(req, res) {
     const { user } = req;
@@ -200,6 +228,11 @@ export default class FilesController {
     res.status(200).json(files);
   }
 
+  /**
+   * Handles the request to publish a file, making it public.
+   * @param {Request} req The HTTP request object.
+   * @param {Response} res The HTTP response object.
+   */
   static async putPublish(req, res) {
     const { user } = req;
     const { id } = req.params;
