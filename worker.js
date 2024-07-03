@@ -1,4 +1,39 @@
 /* eslint-disable import/no-named-as-default */
+/*
+ * This module sets up two Bull queues: one for generating
+ * image thumbnails (`fileQueue`) and another for sending
+ * welcome emails to users (`userQueue`). It utilizes MongoDB
+ * for database operations and promisifies certain file system
+ * functions to use with async/await. The `generateThumbnail`
+ * function creates thumbnails of specified sizes for uploaded
+ * images. The processing functions for each queue handle the
+ * respective jobs of thumbnail generation and email sending.
+ *
+ * Dependencies:
+ * - fs: for file system operations
+ * - util: for promisifying functions
+ * - bull: for job queue management
+ * - image-thumbnail: for generating image thumbnails
+ * - mongodb: for MongoDB operations
+ * - dbClient: custom module for database client
+ * - Mailer: custom module for sending emails
+ *
+ * Two Bull queues:
+ * - fileQueue: Processes image thumbnail generation jobs.
+ * - userQueue: Processes email sending jobs.
+ *
+ * Functions:
+ * - generateThumbnail(filePath, size): Generates a thumbnail
+ *   of a specified width from an image file.
+ * - fileQueue.process: Processes jobs for generating thumbnails
+ *   for uploaded images.
+ * - userQueue.process: Processes jobs for sending welcome emails
+ *   to new users.
+ *
+ * Author: [Your Name]
+ * Created: [Creation Date]
+ */
+
 import { writeFile } from 'fs';
 import { promisify } from 'util';
 import Queue from 'bull/lib/queue';
@@ -66,10 +101,10 @@ userQueue.process(async (job, done) => {
     const mailContent = [
       '<div>',
       '<h3>Hello {{user.name}},</h3>',
-      'Welcome to <a href="https://github.com/B3zaleel/alx-files_manager">',
+      'Welcome to <a href="https://github.com/sebsibe23/alx-files_manager">',
       'ALX-Files_Manager</a>, ',
       'a simple file management API built with Node.js by ',
-      '<a href="https://github.com/B3zaleel">Bezaleel Olakunori</a>. ',
+      '<a href="https://github.com/sebsibe23/alx-files_manager">Bezaleel Olakunori</a>. ',
       'We hope it meets your needs.',
       '</div>',
     ].join('');
