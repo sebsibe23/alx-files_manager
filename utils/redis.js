@@ -50,7 +50,7 @@ class RedisClient {
    * @param {number} duration - The expiration time of the item in seconds.
    * @returns {Promise<void>}
    */
-    /**
+  /**
    * Stores a key and its value along with an expiration time.
    * @param {string} key - The key of the item to store.
    * @param {string|number|boolean} value - The item to store.
