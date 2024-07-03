@@ -4,11 +4,30 @@ import Collection from 'mongodb/lib/collection';
 import envLoader from './env_loader';
 
 /**
- * Represents a MongoDB client.
+ * This module initializes and manages a MongoDB client for the
+ * 'files_manager' application. It loads environment variables
+ * to configure the MongoDB connection details such as host,
+ * port, and database name. The DBClient class provides methods
+ * to check the connection status, and retrieve user and file
+ * collections from the database. The class uses MongoDB's
+ * native driver for efficient database operations.
+ *
+ * Key functionalities include:
+ * - Connecting to the MongoDB server using environment configs
+ * - Checking the connection status with `isAlive()`
+ * - Counting users in the database with `nbUsers()`
+ * - Counting files in the database with `nbFiles()`
+ * - Providing access to the 'users' collection with
+ *   `usersCollection()`
+ * - Providing access to the 'files' collection with
+ *   `filesCollection()`
  */
+
 class DBClient {
   /**
    * Creates a new DBClient instance.
+   * Initializes the MongoDB connection using environment
+   * variables or default values if not specified.
    */
   constructor() {
     envLoader();
@@ -22,7 +41,8 @@ class DBClient {
   }
 
   /**
-   * Checks if this client's connection to the MongoDB server is active.
+   * Checks if this client's connection to the MongoDB server is
+   * active.
    * @returns {boolean}
    */
   isAlive() {
