@@ -8,9 +8,29 @@ import { basicAuthenticate, xTokenAuthenticate } from '../middlewares/auth';
 import { APIError, errorResponse } from '../middlewares/error';
 
 /**
- * Injects routes with their handlers to the given Express application.
- * @param {Express} api
+ * This module defines and injects routes and their handlers into
+ * the provided Express application instance. It sets up routes for
+ * various endpoints related to app status, user authentication,
+ * user management, and file operations. Middleware for
+ * authentication and error handling is also integrated.
+ *
+ * Key functionalities include:
+ * - Setting up status and statistics endpoints
+ * - Configuring authentication routes for connecting and
+ *   disconnecting users
+ * - Defining routes for user creation and retrieval
+ * - Defining routes for file upload, retrieval, publishing,
+ *   and unpublishing
+ * - Handling invalid routes with a 404 error response
+ * - Applying error response middleware
+ *
+ * The injectRoutes function ensures that all necessary routes are
+ * registered and proper middleware is applied for each route.
+ *
+ * @param {Express} api - The Express application instance to inject
+ *                        routes into.
  */
+
 const injectRoutes = (api) => {
   api.get('/status', AppController.getStatus);
   api.get('/stats', AppController.getStats);
